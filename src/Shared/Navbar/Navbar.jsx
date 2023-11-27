@@ -1,8 +1,14 @@
 import {  Link, NavLink } from "react-router-dom";
 import logo from "../../assets/logo-blue-v2.png"
 import Container from "../Container";
+import { useContext } from "react";
+import { AuthContext } from "../../pages/AuthProvider/AuthProvider";
 
 const Navbar = () => {
+    const {user, logOut } = useContext(AuthContext) 
+    const handlelogOut = () =>{
+        logOut()
+    }
     return (    
     <div className=" bg-[#f6f6f9]  mx-auto z-10  lg:py-2 md:sticky top-0  ">
         <Container>
@@ -95,7 +101,7 @@ const Navbar = () => {
                 {/* md and lg device button */}
                 {/* TODO: AFTER add login system than user profile */}
                  <div className="navbar-end">
-                {/* {  
+                 {  
                     user ?   <div className="flex">
                         <div className="dropdown dropdown-end pr-4">
                         <label tabIndex={0} className="btn btn-ghost btn-circle avatar online">
@@ -109,25 +115,27 @@ const Navbar = () => {
                             <img src={user.photoURL} />
                             </div>
                         </label>
-                        <li className="text-center pb-2">{user.displayName}</li>
+                        <li className="text-center font-semibold pb-2">{user.displayName}</li>
                         
-                        <li> <Link to={'/myaddedfood'}  >My added food</Link></li>
-                        <li>  <Link to={'/addfood'}> Add a food</Link> </li>
-                        <li>  <Link to={'/myorder'}> My ordered food </Link> </li>
-                        
+                        <li> <Link to={'/dashboard'} className="font-semibold p-2 text-xl"  > Dashboard</Link></li>
+                        <li onClick={handlelogOut} className=" cursor-pointer font-semibold p-2 pt-0 pb-3  text-xl ">Sign Out </li>
+                       
                         
                         
                         </ul>
                         </div>
-                        <button onClick={handlelogOut} className="btn px-2 lg:px-4 bg-[#ee626b] border-none text-white hover:bg-[#46d993] shadow-md ">Sign Out</button>
+                        
                 </div>
-                : */}
-                
-                <div className="">
-                    <Link to={"/login"} >
+                :<div className="">
+                    <Link to={"/signin"} >
                     <button className="btn px-5 md:px-5 bg-[#3ea5fe] border-none rounded-3xl text-white hover:bg-[#7484a2] md:shadow-sm text-xs lg:text-[16px] ">Sign In</button>
                     </Link>
                 </div>  
+                
+                
+                 }
+                
+                
 
 
                     
