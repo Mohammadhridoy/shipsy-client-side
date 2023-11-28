@@ -20,7 +20,7 @@ const SignUp = () => {
     const axiosPublic = useAxiosPublic()
     const { register, reset, handleSubmit, formState: { errors } } = useForm();
     const onSubmit = (data) =>{
-
+        
         console.log(data)
 
         createUser(data.email, data.password)
@@ -35,7 +35,8 @@ const SignUp = () => {
         const userData = {
             name: data.name,
             email: data.email,
-            role: data.usertype
+            role: data.usertype,
+            image: data.photoURL
 
         }
         axiosPublic.post("/user", userData)
@@ -47,7 +48,7 @@ const SignUp = () => {
                 Swal.fire({
                     position: "top-end",
                     icon: "success",
-                    title: "Your work has been saved",
+                    title: "user create successfully",
                     showConfirmButton: false,
                     timer: 1500
                   });
@@ -109,7 +110,7 @@ const SignUp = () => {
                 <select defaultValue="default"  {...register("usertype")} className="select select-bordered w-full max-w-xs mb-4">
                 <option value="default" >Select user type</option>
                 <option value="user" >User</option>
-                <option value="DeliveryMen">DeliveryMen</option>
+                <option value="deliveryman">DeliveryMen</option>
                 </select>
 
             {/* email section */}

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,7 +8,10 @@ import Social from "./Social";
 
 
 const Signin = () => {
+    const location = useLocation()
+    const navigate = useNavigate()
     const {singInUser} = useContext(AuthContext)
+    const from = location.state?.from?.pathname || "/"
 
     const { register, handleSubmit, formState: { errors } } = useForm()
   const onSubmit = (data) =>{ 
@@ -17,7 +20,8 @@ const Signin = () => {
 
     singInUser(data.email, data.password)
         .then(result =>{
-            console.log(result.user)     
+            console.log(result.user) 
+            navigate(from, {replace:true})    
         })
         .catch(error => {
             console.log(error.message)

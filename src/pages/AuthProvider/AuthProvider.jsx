@@ -64,6 +64,10 @@ const AuthProvider = ({children}) => {
         setLoading(true)
         return signOut(auth)
     }
+    // get user data 
+    
+
+
 
     const authInfo = {
         user,

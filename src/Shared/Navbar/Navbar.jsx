@@ -3,12 +3,27 @@ import logo from "../../assets/logo-blue-v2.png"
 import Container from "../Container";
 import { useContext } from "react";
 import { AuthContext } from "../../pages/AuthProvider/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import useAdmin from "../../Hooks/useAdmin";
+import useDelivery from "../../Hooks/useDelivery";
 
 const Navbar = () => {
     const {user, logOut } = useContext(AuthContext) 
     const handlelogOut = () =>{
         logOut()
     }
+    const [delivery] = useDelivery()
+    const [admin] = useAdmin()
+    const axiosSecure = useAxiosSecure()
+    const {data: userinfo=[] }= useQuery({
+        queryKey: ['bookinginfo'],
+        queryFn: async()=>{
+            const res = await axiosSecure.get(`/user?email=${user?.email}`)
+            return res.data
+        } ,
+      })
+      
     return (    
     <div className=" bg-[#f6f6f9]  mx-auto z-10  lg:py-2 md:sticky top-0  ">
         <Container>
@@ -106,18 +121,46 @@ const Navbar = () => {
                         <div className="dropdown dropdown-end pr-4">
                         <label tabIndex={0} className="btn btn-ghost btn-circle avatar online">
                             <div className="w-10 rounded-full">
-                            <img src={user.photoURL} />
+                            {
+                                  user && admin && <img src={user?.photoURL} /> 
+                                }
+                                {
+                                  user&& !admin && !delivery &&  <img src={userinfo[0]?.image} />
+                                }
+                                {
+                                     user && delivery  && <img src={user?.photoURL} /> 
+                                }
+                            
                             </div>
                         </label>
                         <ul tabIndex={0} className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
                         <label tabIndex={0} className="btn btn-ghost btn-circle avatar online  ml-[72px] m-3">
                             <div className="w-16 mx-auto rounded-full">
-                            <img src={user.photoURL} />
+                            {
+                                  user && admin && <img src={user?.photoURL} /> 
+                                }
+                                {
+                                  user&& !admin && !delivery &&  <img src={userinfo[0]?.image} />
+                                }
+                                {
+                                     user && delivery  && <img src={user?.photoURL} /> 
+                                }
+                            
                             </div>
                         </label>
                         <li className="text-center font-semibold pb-2">{user.displayName}</li>
                         
-                        <li> <Link to={'/dashboard'} className="font-semibold p-2 text-xl"  > Dashboard</Link></li>
+                        <li>{
+                            user && admin && <Link to={'/dashboard/allparcels'} className="font-semibold p-2 text-xl"  > Dashboard</Link> 
+                            }
+                            {
+                                user&& !admin && !delivery && <Link to={'/dashboard/myprofile'} className="font-semibold p-2 text-xl"  > Dashboard</Link>
+                            } 
+                          
+                            {
+                              user && delivery  && <Link to={'/dashboard/deliverylist'} className="font-semibold p-2 text-xl"  > Dashboard</Link>
+                            }
+                            </li>
                         <li onClick={handlelogOut} className=" cursor-pointer font-semibold p-2 pt-0 pb-3  text-xl ">Sign Out </li>
                        
                         
