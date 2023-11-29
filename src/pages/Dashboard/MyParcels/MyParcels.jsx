@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Container from "../../../Shared/Container";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import  { AuthContext } from "../../AuthProvider/AuthProvider";
 import Swal from "sweetalert2";
 import { useForm } from "react-hook-form";
@@ -12,14 +12,14 @@ const MyParcels = () => {
     const navigate = useNavigate()
     const {user} = useContext(AuthContext)
     const axiossecure = useAxiosSecure()
-    const {  data: bookings=[], refetch } = useQuery({
-        queryKey: ['bookinginfo'],
+    const {  data: bookings = [], refetch } = useQuery({
+        queryKey: ['bookinginfos'],
         queryFn: async()=>{
             const res = await axiossecure.get(`/bookings?email=${user?.email}`)
             return res.data
         } ,
       })
-     console.log(bookings)
+    //  console.log(bookings)
     
     const handleUpdate = (id) =>{
         navigate(`/dashboard/updateparcels/${id}`)
@@ -54,10 +54,46 @@ const MyParcels = () => {
             }
           });
     }
+    // set deliverymanid 
+    const [delivermanInfo, setdelivermanInfo ]  = useState('') 
+    
+   
+    
+    const [ deliverymanEmail, deliverymanId] = delivermanInfo.split(',');
+
+    // console.log(deliverymanEmail) 
     //   review form input data
     const { register, handleSubmit } = useForm();
 
-    const onSubmit = data => console.log(data);
+    const onSubmit = data =>{
+        
+        
+    
+        const reviewinfo = {
+            giverName: user?.displayName,
+            giverImage: user?.photoURL,
+            deliveryManId: deliverymanId,
+            delliveryManEmail: deliverymanEmail,
+            feedback: data?.feedback,
+            rating: parseInt(data?.rating),
+            reviewGivingDate: data?.reviewGivingDate
+
+        }
+ 
+        axiossecure.post("/reviews", reviewinfo)
+        .then(res=>{
+            if(res.data.insertedId){
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "review added successfully",
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+            }
+        })
+        
+    };
 
     return (
         <div className="py-8">
@@ -85,7 +121,17 @@ const MyParcels = () => {
                 Booking Status
                 </th>
                 <th className="px-4 py-2">
-                
+                {
+                  bookings.length ? <Link to='/dashboard/pay'
+                  className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700"
+                  >
+                      Pay
+                  </Link>: <button disabled
+                            className="inline-block rounded bg-gray-400 px-4 py-2 text-xs font-medium text-whit">                           
+                                 Pay
+                            </button>    
+                }
+               
                 </th>
             </tr>
             </thead>
@@ -97,17 +143,13 @@ const MyParcels = () => {
                     {book?.parcelType}
                     </td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{book?.requestedDeliveryDate}</td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">coming soon</td>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{book?.approximateDeliveryDate? book?.approximateDeliveryDate :"Wait"}</td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{book?.bookingDate}</td>
-                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{"id"}</td>
+                    <td className="whitespace-nowrap px-4 py-2 text-gray-700">{book?.deliverymanid? book?.deliverymanid:"Wait"}</td>
                     <td className="whitespace-nowrap px-4 py-2 text-gray-700">{ book?.status  }</td>
                     
                     <td className="whitespace-nowrap px-4 py-2 space-x-3">
-                        <Link to=''
-                        className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700"
-                        >
-                            Pay
-                        </Link>
+                       
                         
                           
                         {
@@ -129,11 +171,15 @@ const MyParcels = () => {
                                  cancel
                             </button> 
                             }
+                                {/* ${book?.deliverymanemail} */}
+                            {
+                                book?.status === "delivered" && <button onClick={()=>document.getElementById('my_modal_1').showModal()}  onBlur={()=>setdelivermanInfo(`${book?.deliverymanemail},${book?.deliverymanid}`)} 
+                                className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700">                           
+                                    Review
+                                </button> 
+                            }
                             
-                            <button onClick={()=>document.getElementById('my_modal_1').showModal()}
-                            className="inline-block rounded bg-indigo-600 px-4 py-2 text-xs font-medium text-white hover:bg-indigo-700">                           
-                                Review
-                            </button> 
+                           
                         
                    
                     </td>
@@ -154,7 +200,7 @@ const MyParcels = () => {
                   <form  method="dialog">
                   <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     </form>  
-                <form onSubmit={handleSubmit(onSubmit)}  >
+                <form onSubmit={handleSubmit(onSubmit)}>
                 
                    
                     {/* default value user  */}
@@ -226,6 +272,7 @@ const MyParcels = () => {
                     id="UserEmail"
                     placeholder="Delivery Men Id"
                     disabled
+                    defaultValue={deliverymanId}
                     {...register("deliveryManId")}
                     className="mt-1 p-3  w-full rounded-md border border-gray-200 shadow-sm sm:text-sm"
                 />

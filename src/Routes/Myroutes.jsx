@@ -14,6 +14,8 @@ import Allparcels from "../pages/Dashboard/Allparcels/Allparcels";
 import Allusers from "../pages/Dashboard/Allusers/Allusers";
 import MyDeliveryList from "../pages/Dashboard/MyDeliveryList/MyDeliveryList";
 import Deliverymen from "../pages/Dashboard/Deliverymen/Deliverymen";
+import Checkout from "../pages/Dashboard/Checkout/Checkout";
+import MyReview from "../pages/Dashboard/MyReviews/MyReview";
 
 
 const Myroutes = createBrowserRouter([
@@ -60,6 +62,10 @@ const Myroutes = createBrowserRouter([
                 element: <UpdateParcels></UpdateParcels>,
                 loader: ({params}) => fetch(`http://localhost:5000/bookings/${params.id}`)
             },
+            {
+                path:"/dashboard/pay",
+                element:<Checkout></Checkout>
+            },
             // admin routes 
             {
                 path:"/dashboard/allparcels",
@@ -77,6 +83,9 @@ const Myroutes = createBrowserRouter([
             {
                 path:"/dashboard/deliverylist",
                 element: <MyDeliveryList></MyDeliveryList>
+            },{
+                path: "/dashboard/myreviews",
+                element: <MyReview></MyReview>
             }
         
         ]
