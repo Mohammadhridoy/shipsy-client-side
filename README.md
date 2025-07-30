@@ -2,6 +2,8 @@
 
 # Admin Email: khan@gmail.com 
 # Admin Password: Amin712#
+# Delivery Men’s email: robert@gmail.com
+# Delivery Men’s password: Amin712#
 
 
 
